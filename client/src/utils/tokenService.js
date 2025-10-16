@@ -1,4 +1,4 @@
-const ACCESS_TOKEN_KEY = 'accessToken';
+const ACCESS_TOKEN_KEY = 'authToken'; // Changed to match your app's existing key
 const REFRESH_TOKEN_KEY = 'refreshToken';
 const LOGIN_DATA_KEY = 'loginData';
 const USER_DATA_KEY = 'userData';
@@ -6,7 +6,8 @@ const USER_DATA_KEY = 'userData';
 export const LOGIN_ROUTE = '/login';
 
 export function getAccessToken() {
-  return localStorage.getItem(ACCESS_TOKEN_KEY);
+  // Try both keys for backward compatibility
+  return localStorage.getItem(ACCESS_TOKEN_KEY) || localStorage.getItem('accessToken');
 }
 export function getRefreshToken() {
   return localStorage.getItem(REFRESH_TOKEN_KEY);

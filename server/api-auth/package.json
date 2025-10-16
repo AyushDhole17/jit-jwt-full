@@ -7,7 +7,8 @@
     "start": "node ./src/index.js",
     "dev": "nodemon ./src/index.js",
     "lint": "eslint src",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "seed:rbac": "node ./src/scripts/rbacSeeder.js"
   },
   "author": "Rushikesh Pande",
   "license": "ISC",

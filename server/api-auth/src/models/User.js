@@ -41,6 +41,12 @@ const userSchema = new mongoose.Schema(
       ],
       required: true,
     },
+    // Reference to RBAC Role for dynamic permissions
+    roleRef: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Role",
+      default: null,
+    },
     isActive: {
       type: Boolean,
       default: true,

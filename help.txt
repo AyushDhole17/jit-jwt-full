@@ -1,0 +1,12 @@
+const { checkPermission } = require("../middlewares/rbac");
+
+router.post("/api/resource",
+  authenticateToken,
+  checkPermission("resource", "create"),
+  yourController
+);
+
+const hasPermission = await rbacService.checkPermission(
+  userId, "resource", "action"
+);
+

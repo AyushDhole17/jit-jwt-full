@@ -50,6 +50,7 @@ const MonitoringDetailsHistory = Loadable(lazy(() => import('views/monitoring-de
 const UserRoles = Loadable(lazy(() => import('views/user-roles')));
 const DevicePropertiesPage = Loadable(lazy(() => import('views/device-properties')));
 const PlantSummaryDashboard = Loadable(lazy(() => import('views/plantSummary/Dashboard.jsx')));
+const RBACManagement = Loadable(lazy(() => import('views/rbac')));
 
 // Electricity Bill
 const ElectricityBill = Loadable(lazy(() => import('views/electricity/BillWizard')));
@@ -57,11 +58,10 @@ const BillsOverview = Loadable(lazy(() => import('views/electricity/BillsOvervie
 const BillDetails = Loadable(lazy(() => import('views/electricity/BillDetails')));
 
 // Icons
-const Icons = Loadable(lazy(() => import('views/device-properties/forms/components/Icons')))
+const Icons = Loadable(lazy(() => import('views/device-properties/forms/components/Icons')));
 
 // 404 page
 const NotFound = Loadable(lazy(() => import('views/error_pages/Error-404')));
-
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -83,6 +83,7 @@ const MainRoutes = {
 
     { path: 'help', element: <Help /> },
     { path: 'my-profile', element: <MyProfile /> },
+    { path: 'rbac-management', element: <RBACManagement /> },
 
     {
       path: '/canvas2',
@@ -99,7 +100,6 @@ const MainRoutes = {
     },
 
     {
-
       path: '/icons',
       element: <Icons />
     },
@@ -110,7 +110,7 @@ const MainRoutes = {
     {
       path: '*',
       element: <NotFound />
-    },
+    }
   ]
 };
 

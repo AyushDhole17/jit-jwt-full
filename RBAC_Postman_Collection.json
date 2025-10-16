@@ -1,0 +1,638 @@
+{
+  "info": {
+    "name": "RBAC API Collection",
+    "description": "Complete API collection for Role-Based Access Control (RBAC) system",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "rbac-api-collection",
+    "version": "1.0.0"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:9001/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refreshToken",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('accessToken', jsonData.accessToken);",
+                  "    pm.environment.set('refreshToken', jsonData.refreshToken);",
+                  "    pm.collectionVariables.set('accessToken', jsonData.accessToken);",
+                  "    pm.collectionVariables.set('refreshToken', jsonData.refreshToken);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Login to get access and refresh tokens"
+          }
+        },
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\",\n  \"mobile\": \"1234567890\",\n  \"role\": \"operator\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('accessToken', jsonData.accessToken);",
+                  "    pm.collectionVariables.set('accessToken', jsonData.accessToken);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"{{refreshToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/refresh-token",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "refresh-token"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "RBAC - Roles",
+      "item": [
+        {
+          "name": "Get All Roles",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/policy/roles",
+              "host": ["{{baseUrl}}"],
+              "path": ["policy", "roles"]
+            },
+            "description": "Retrieve all roles with their permissions"
+          }
+        },
+        {
+          "name": "Get Role by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/policy/roles/:roleId",
+              "host": ["{{baseUrl}}"],
+              "path": ["policy", "roles", ":roleId"],
+              "variable": [
+                {
+                  "key": "roleId",
+                  "value": "ROLE_ID_HERE"
+                }
+              ]
+            },
+            "description": "Get a specific role by ID"
+          }
+        },
+        {
+          "name": "Create Role",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"custom_role\",\n  \"displayName\": \"Custom Role\",\n  \"description\": \"A custom role for specific purposes\",\n  \"priority\": 40,\n  \"permissions\": []\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/policy/roles",
+              "host": ["{{baseUrl}}"],
+              "path": ["policy", "roles"]
+            },
+            "description": "Create a new role"
+          }
+        },
+        {
+          "name": "Update Role",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"displayName\": \"Updated Role Name\",\n  \"description\": \"Updated description\",\n  \"priority\": 45\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/policy/roles/:roleId",
+              "host": ["{{baseUrl}}"],
+              "path": ["policy", "roles", ":roleId"],
+              "variable": [
+                {
+                  "key": "roleId",
+                  "value": "ROLE_ID_HERE"
+                }
+              ]
+            },
+            "description": "Update an existing role"
+          }
+        },
+        {
+          "name": "Delete Role",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/policy/roles/:roleId",
+              "host": ["{{baseUrl}}"],
+              "path": ["policy", "roles", ":roleId"],
+              "variable": [
+                {
+                  "key": "roleId",
+                  "value": "ROLE_ID_HERE"
+                }
+              ]
+            },
+            "description": "Delete a role (cannot delete system roles or roles assigned to users)"
+          }
+        },
+        {
+          "name": "Assign Permissions to Role",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"permissionIds\": [\n    \"PERMISSION_ID_1\",\n    \"PERMISSION_ID_2\",\n    \"PERMISSION_ID_3\"\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/policy/roles/:roleId/permissions",
+              "host": ["{{baseUrl}}"],
+              "path": ["policy", "roles", ":roleId", "permissions"],
+              "variable": [
+                {
+                  "key": "roleId",
+                  "value": "ROLE_ID_HERE"
+                }
+              ]
+            },
+            "description": "Assign permissions to a specific role"
+          }
+        }
+      ]
+    },
+    {
+      "name": "RBAC - Permissions",
+      "item": [
+        {
+          "name": "Get All Permissions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/policy/permissions",
+              "host": ["{{baseUrl}}"],
+              "path": ["policy", "permissions"]
+            },
+            "description": "Retrieve all permissions"
+          }
+        },
+        {
+          "name": "Create Permission",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"create_invoice\",\n  \"resource\": \"invoice\",\n  \"action\": \"create\",\n  \"description\": \"Create new invoices\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/policy/permissions",
+              "host": ["{{baseUrl}}"],
+              "path": ["policy", "permissions"]
+            },
+            "description": "Create a new permission"
+          }
+        },
+        {
+          "name": "Update Permission",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Updated permission description\",\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/policy/permissions/:permissionId",
+              "host": ["{{baseUrl}}"],
+              "path": ["policy", "permissions", ":permissionId"],
+              "variable": [
+                {
+                  "key": "permissionId",
+                  "value": "PERMISSION_ID_HERE"
+                }
+              ]
+            },
+            "description": "Update an existing permission"
+          }
+        },
+        {
+          "name": "Delete Permission",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/policy/permissions/:permissionId",
+              "host": ["{{baseUrl}}"],
+              "path": ["policy", "permissions", ":permissionId"],
+              "variable": [
+                {
+                  "key": "permissionId",
+                  "value": "PERMISSION_ID_HERE"
+                }
+              ]
+            },
+            "description": "Delete a permission"
+          }
+        }
+      ]
+    },
+    {
+      "name": "RBAC - User Permissions",
+      "item": [
+        {
+          "name": "Check User Permission",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"resource\": \"user\",\n  \"action\": \"create\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/policy/check-permission",
+              "host": ["{{baseUrl}}"],
+              "path": ["policy", "check-permission"]
+            },
+            "description": "Check if current user has a specific permission"
+          }
+        },
+        {
+          "name": "Get My Permissions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/policy/my-permissions",
+              "host": ["{{baseUrl}}"],
+              "path": ["policy", "my-permissions"]
+            },
+            "description": "Get all permissions for the current user"
+          }
+        }
+      ]
+    },
+    {
+      "name": "RBAC - System",
+      "item": [
+        {
+          "name": "Initialize RBAC",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/policy/initialize",
+              "host": ["{{baseUrl}}"],
+              "path": ["policy", "initialize"]
+            },
+            "description": "Initialize RBAC with default roles and permissions (Admin only)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "User Management",
+      "item": [
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/user/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "profile"]
+            },
+            "description": "Get current user profile"
+          }
+        },
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/user/getAllUsers",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "getAllUsers"]
+            },
+            "description": "Get all users (Admin only)"
+          }
+        },
+        {
+          "name": "Get User by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/user/getUserById/:userId",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "getUserById", ":userId"],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "USER_ID_HERE"
+                }
+              ]
+            },
+            "description": "Get user by ID (Admin only)"
+          }
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Name\",\n  \"email\": \"updated@example.com\",\n  \"mobile\": \"9876543210\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/user/updateUser/:userId",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "updateUser", ":userId"],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "USER_ID_HERE"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Activate User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/user/activateUser/:userId",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "activateUser", ":userId"],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "USER_ID_HERE"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Deactivate User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/user/deactivateUser/:userId",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "deactivateUser", ":userId"],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "USER_ID_HERE"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/user/deleteUser/:userId",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "deleteUser", ":userId"],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "USER_ID_HERE"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
