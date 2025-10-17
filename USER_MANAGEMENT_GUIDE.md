@@ -20,6 +20,7 @@ This comprehensive guide covers the complete Role-Based Access Control (RBAC) an
 ## ✨ Features
 
 ### Roles Management
+
 - ✅ Create, edit, and delete custom roles
 - ✅ Assign permissions to roles
 - ✅ System roles protection (cannot delete/edit critical roles)
@@ -29,6 +30,7 @@ This comprehensive guide covers the complete Role-Based Access Control (RBAC) an
 - ✅ Real-time permission assignment
 
 ### Users Management
+
 - ✅ View all users in a searchable, sortable table
 - ✅ Filter users by status (Active/Inactive) and role
 - ✅ Edit user information (name, email, mobile)
@@ -39,6 +41,7 @@ This comprehensive guide covers the complete Role-Based Access Control (RBAC) an
 - ✅ Pagination for large user lists
 
 ### UI/UX Enhancements
+
 - ✅ Professional Material-UI design
 - ✅ Loading skeletons for better UX
 - ✅ Toast notifications for all actions
@@ -59,6 +62,7 @@ This comprehensive guide covers the complete Role-Based Access Control (RBAC) an
 ### Initial Setup
 
 1. **Seed Default Roles** (if not already done):
+
    ```bash
    cd server/api-auth
    npm run seed:rbac
@@ -79,12 +83,14 @@ The Roles Management page provides a comprehensive interface for managing system
 ### Key Components
 
 #### Summary Dashboard
+
 - **Total Roles**: Shows count of all roles
 - **Active Roles**: Count of currently active roles
 - **System Roles**: Protected, pre-configured roles
 - **Custom Roles**: User-created roles
 
 #### Search and Filter
+
 - Search by role name, display name, or description
 - Real-time filtering as you type
 - Case-insensitive search
@@ -116,6 +122,7 @@ The Roles Management page provides a comprehensive interface for managing system
 3. Success toast confirms deletion
 
 **Restrictions**:
+
 - System roles cannot be deleted
 - Roles assigned to users cannot be deleted
 
@@ -128,6 +135,7 @@ The Roles Management page provides a comprehensive interface for managing system
 5. Click **"Save Permissions"** to apply changes
 
 **Features**:
+
 - Selected permission count displayed in real-time
 - Visual indicators for selected permissions
 - Grouped by resource for easy management
@@ -144,6 +152,7 @@ The Users Management page provides complete control over system users, their rol
 ### Key Components
 
 #### Summary Dashboard
+
 - **Total Users**: All users in the system
 - **Active Users**: Currently active users
 - **Inactive Users**: Deactivated users
@@ -152,23 +161,27 @@ The Users Management page provides complete control over system users, their rol
 #### Search and Filters
 
 **Search Bar**: Search by:
+
 - Name
 - Email
 - Mobile number
 - Role
 
 **Status Filter**:
+
 - All Status
 - Active Only
 - Inactive Only
 
 **Role Filter**:
+
 - All Roles
 - Specific role (dynamically populated)
 
 ### User Table
 
 **Columns**:
+
 - User (with avatar and name)
 - Email
 - Mobile
@@ -195,6 +208,7 @@ The Users Management page provides complete control over system users, their rol
 4. Click **"Assign Role"**
 
 **Benefits**:
+
 - User inherits all permissions from the role
 - Dynamic permission management
 - Easy to change roles as needed
@@ -206,6 +220,7 @@ The Users Management page provides complete control over system users, their rol
 3. Inactive users cannot log in
 
 **Use Cases**:
+
 - Temporarily suspend access
 - Offboarding process
 - Security incidents
@@ -231,6 +246,7 @@ The Users Management page provides complete control over system users, their rol
 ### Permission Structure
 
 Each permission has:
+
 - **Name**: Unique identifier (e.g., `create_user`)
 - **Resource**: What it controls (e.g., `user`, `role`, `dashboard`)
 - **Action**: Type of operation (e.g., `create`, `read`, `update`, `delete`)
@@ -259,6 +275,7 @@ Each permission has:
 ### Permission Hierarchy
 
 Roles have priority levels (0-100):
+
 - **90-100**: Super Admin/Admin level
 - **70-89**: Manager level
 - **50-69**: Supervisor level
@@ -273,12 +290,14 @@ Higher priority roles typically have more permissions.
 ### User API Endpoints
 
 #### Get All Users
+
 ```http
 GET /api/v1/user/getAllUsers
 Authorization: Bearer <token>
 ```
 
 **Response**:
+
 ```json
 [
   {
@@ -299,6 +318,7 @@ Authorization: Bearer <token>
 ```
 
 #### Assign Role to User
+
 ```http
 PUT /api/v1/user/assignRole/:userId
 Authorization: Bearer <token>
@@ -310,12 +330,14 @@ Content-Type: application/json
 ```
 
 #### Activate User
+
 ```http
 PUT /api/v1/user/activateUser/:userId
 Authorization: Bearer <token>
 ```
 
 #### Deactivate User
+
 ```http
 PUT /api/v1/user/deactivateUser/:userId
 Authorization: Bearer <token>
@@ -324,12 +346,14 @@ Authorization: Bearer <token>
 ### Role API Endpoints
 
 #### Get All Roles
+
 ```http
 GET /api/v1/policy/roles
 Authorization: Bearer <token>
 ```
 
 #### Create Role
+
 ```http
 POST /api/v1/policy/roles
 Authorization: Bearer <token>
@@ -344,6 +368,7 @@ Content-Type: application/json
 ```
 
 #### Assign Permissions to Role
+
 ```http
 POST /api/v1/policy/roles/:roleId/permissions
 Authorization: Bearer <token>
@@ -393,6 +418,7 @@ Content-Type: application/json
 **Symptoms**: Empty list, no data showing
 
 **Solutions**:
+
 1. Check if you're logged in as admin
 2. Verify backend is running
 3. Check browser console for errors
@@ -404,6 +430,7 @@ Content-Type: application/json
 **Symptoms**: Error when assigning role to user
 
 **Solutions**:
+
 1. Verify role ID is valid
 2. Check if user exists
 3. Ensure you have admin privileges
@@ -414,11 +441,13 @@ Content-Type: application/json
 **Symptoms**: Delete button disabled or fails
 
 **Possible Causes**:
+
 - Role is a system role (protected)
 - Role is assigned to users
 - Insufficient permissions
 
 **Solutions**:
+
 - Unassign role from all users first
 - Cannot delete system roles
 
@@ -427,6 +456,7 @@ Content-Type: application/json
 **Symptoms**: User can't access features after role assignment
 
 **Solutions**:
+
 1. Verify permissions are assigned to the role
 2. User may need to log out and log back in
 3. Check token refresh is working
@@ -437,6 +467,7 @@ Content-Type: application/json
 **Symptoms**: Search doesn't filter results
 
 **Solutions**:
+
 1. Clear search box and try again
 2. Refresh the page
 3. Check if data is loaded
@@ -457,6 +488,7 @@ Content-Type: application/json
 ### Roles Management Page
 
 **Key Elements**:
+
 - Search bar at top
 - Summary cards showing statistics
 - Grid layout of role cards
@@ -466,6 +498,7 @@ Content-Type: application/json
 ### Users Management Page
 
 **Key Elements**:
+
 - Summary dashboard with 4 metrics
 - Search and filter controls
 - Data table with pagination
@@ -475,6 +508,7 @@ Content-Type: application/json
 ### Permission Assignment Dialog
 
 **Key Elements**:
+
 - Grouped by resource
 - Checkboxes for each permission
 - "Select All" per resource group
@@ -507,12 +541,14 @@ Content-Type: application/json
 ## 📞 Support
 
 ### Documentation
+
 - RBAC Architecture: `RBAC_ARCHITECTURE.md`
 - API Reference: `RBAC_README.md`
 - Quick Start: `RBAC_QUICK_START.md`
 - Token Management: `TOKEN_MANAGEMENT_GUIDE.md`
 
 ### Testing
+
 - Postman Collection: `RBAC_Postman_Collection.json`
 - Token Test Utils: `tokenTest` in browser console
 
@@ -521,9 +557,11 @@ Content-Type: application/json
 ## 🔄 Updates & Maintenance
 
 ### Version History
+
 - **v1.0** (Current): Complete RBAC and User Management system
 
 ### Upcoming Features
+
 - Bulk user operations
 - Export users/roles to CSV
 - Role templates

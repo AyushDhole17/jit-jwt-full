@@ -34,12 +34,16 @@ exports.createUser = async (req, res) => {
 
     // Check if the user is an admin
     if (req.user.role !== "admin" && req.user.role !== "super_admin") {
-      return res.status(403).json({ message: "Access denied. Only admins can create users." });
+      return res
+        .status(403)
+        .json({ message: "Access denied. Only admins can create users." });
     }
 
     // Validate required fields
     if (!name || !email || !password) {
-      return res.status(400).json({ message: "Name, email, and password are required" });
+      return res
+        .status(400)
+        .json({ message: "Name, email, and password are required" });
     }
 
     // Validate email format
@@ -52,26 +56,34 @@ exports.createUser = async (req, res) => {
     if (mobile) {
       const mobileRegex = /^[0-9]{10}$/;
       if (!mobileRegex.test(mobile)) {
-        return res.status(400).json({ message: "Invalid mobile number. Must be 10 digits" });
+        return res
+          .status(400)
+          .json({ message: "Invalid mobile number. Must be 10 digits" });
       }
     }
 
     // Validate password length
     if (password.length < 6) {
-      return res.status(400).json({ message: "Password must be at least 6 characters long" });
+      return res
+        .status(400)
+        .json({ message: "Password must be at least 6 characters long" });
     }
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ message: "User with this email already exists" });
+      return res
+        .status(400)
+        .json({ message: "User with this email already exists" });
     }
 
     // Check if mobile number already exists
     if (mobile) {
       const existingMobile = await User.findOne({ mobile });
       if (existingMobile) {
-        return res.status(400).json({ message: "User with this mobile number already exists" });
+        return res
+          .status(400)
+          .json({ message: "User with this mobile number already exists" });
       }
     }
 
@@ -94,7 +106,7 @@ exports.createUser = async (req, res) => {
       company,
       role: roleName,
       roleRef: roleId || null,
-      isActive: true
+      isActive: true,
     });
 
     await newUser.save();
@@ -104,9 +116,9 @@ exports.createUser = async (req, res) => {
       .populate("roleRef", "name displayName description priority permissions")
       .populate("company", "name");
 
-    res.status(201).json({ 
-      message: "User created successfully", 
-      user: userResponse 
+    res.status(201).json({
+      message: "User created successfully",
+      user: userResponse,
     });
   } catch (error) {
     res
@@ -424,7 +436,9 @@ exports.assignRoleToUser = async (req, res) => {
 
     // Check if the user is an admin
     if (req.user.role !== "admin" && req.user.role !== "super_admin") {
-      return res.status(403).json({ message: "Access denied. Admin privileges required." });
+      return res
+        .status(403)
+        .json({ message: "Access denied. Admin privileges required." });
     }
 
     if (!roleId) {

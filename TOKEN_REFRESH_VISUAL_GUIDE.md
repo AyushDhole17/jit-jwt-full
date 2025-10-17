@@ -180,6 +180,7 @@ T+202ms [User Interface]        Data displayed to user
 ## 🎯 Key Decision Points
 
 ### 1. Should Request Include Token?
+
 ```
 Is URL /auth/login or /auth/register?
 ├─ YES → Skip token (no auth needed)
@@ -187,6 +188,7 @@ Is URL /auth/login or /auth/register?
 ```
 
 ### 2. Should Trigger Refresh?
+
 ```
 Is response 401?
 ├─ NO  → Return response normally
@@ -198,6 +200,7 @@ Is response 401?
 ```
 
 ### 3. Should Queue Request?
+
 ```
 Is refresh in progress?
 ├─ YES → Queue this request
@@ -209,6 +212,7 @@ Is refresh in progress?
 ## 🧪 Testing Scenarios
 
 ### ✅ Scenario 1: Normal Operation
+
 ```
 Given: Valid access token
 When:  User makes API request
@@ -217,6 +221,7 @@ And:   No refresh triggered
 ```
 
 ### ✅ Scenario 2: Token Just Expired
+
 ```
 Given: Expired access token, valid refresh token
 When:  User makes API request
@@ -228,6 +233,7 @@ And:   User sees data (seamless experience)
 ```
 
 ### ✅ Scenario 3: Multiple Concurrent Requests
+
 ```
 Given: Expired access token
 When:  User makes 5 API requests simultaneously
@@ -239,6 +245,7 @@ And:   All 5 requests succeed
 ```
 
 ### ✅ Scenario 4: Refresh Token Expired
+
 ```
 Given: Expired access token, expired refresh token
 When:  User makes API request
@@ -268,12 +275,14 @@ When token refresh isn't working, check:
 ## 📱 User Experience
 
 ### Before Fix:
+
 ```
 User Action → API Call → 401 Error → ❌ Error Message
                                     → 🔄 Manual Login Required
 ```
 
 ### After Fix:
+
 ```
 User Action → API Call → 401 Error → 🔄 Auto Refresh (silent)
                                     → 🔁 Retry Request (silent)

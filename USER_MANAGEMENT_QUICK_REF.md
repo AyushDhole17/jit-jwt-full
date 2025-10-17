@@ -2,9 +2,9 @@
 
 ## 🚀 Quick Access
 
-| Page | URL | Purpose |
-|------|-----|---------|
-| **Roles Management** | `/rbac-management` | Manage roles and permissions |
+| Page                 | URL                 | Purpose                       |
+| -------------------- | ------------------- | ----------------------------- |
+| **Roles Management** | `/rbac-management`  | Manage roles and permissions  |
 | **Users Management** | `/users-management` | Manage users and assign roles |
 
 ---
@@ -12,6 +12,7 @@
 ## 👤 Users Management
 
 ### Search & Filter
+
 ```
 Search: Name, Email, Mobile, Role
 Status: All / Active / Inactive
@@ -20,25 +21,28 @@ Role: All / Specific Role
 
 ### Actions
 
-| Icon | Action | Description |
-|------|--------|-------------|
-| ✏️ Edit | Edit User | Update name, email, mobile |
-| 🛡️ Shield | Assign Role | Assign RBAC role to user |
-| 👤 Person | Toggle Status | Activate/Deactivate user |
-| 🗑️ Delete | Delete User | Permanently remove user |
+| Icon      | Action        | Description                |
+| --------- | ------------- | -------------------------- |
+| ✏️ Edit   | Edit User     | Update name, email, mobile |
+| 🛡️ Shield | Assign Role   | Assign RBAC role to user   |
+| 👤 Person | Toggle Status | Activate/Deactivate user   |
+| 🗑️ Delete | Delete User   | Permanently remove user    |
 
 ### Quick Operations
 
 **Assign Role to User**:
+
 1. Click 🛡️ Shield icon
 2. Select role from dropdown
 3. Click "Assign Role"
 
 **Activate/Deactivate User**:
+
 1. Click 👤 Person icon
 2. Status toggles immediately
 
 **Edit User**:
+
 1. Click ✏️ Edit icon
 2. Update fields
 3. Click "Save Changes"
@@ -48,6 +52,7 @@ Role: All / Specific Role
 ## 🛡️ Roles Management
 
 ### Role Priority Levels
+
 - **90-100**: Super Admin / Admin
 - **70-89**: Manager
 - **50-69**: Supervisor
@@ -55,11 +60,11 @@ Role: All / Specific Role
 
 ### Actions
 
-| Action | Steps |
-|--------|-------|
-| **Create Role** | Click "Create Role" → Fill form → Save |
-| **Edit Role** | Click Edit icon → Update → Save |
-| **Delete Role** | Click Delete icon → Confirm |
+| Action                 | Steps                                             |
+| ---------------------- | ------------------------------------------------- |
+| **Create Role**        | Click "Create Role" → Fill form → Save            |
+| **Edit Role**          | Click Edit icon → Update → Save                   |
+| **Delete Role**        | Click Delete icon → Confirm                       |
 | **Manage Permissions** | Click "Manage Permissions" → Check/Uncheck → Save |
 
 ### Creating a Role
@@ -147,27 +152,27 @@ Option 2: Delete
 
 ## 🔐 Default Roles
 
-| Role | Priority | Description |
-|------|----------|-------------|
-| **Super Admin** | 100 | Full system access |
-| **Admin** | 90 | Administrative access |
-| **Manager** | 70 | Management operations |
-| **Supervisor** | 60 | Team supervision |
-| **Operator** | 50 | Basic operations |
+| Role            | Priority | Description           |
+| --------------- | -------- | --------------------- |
+| **Super Admin** | 100      | Full system access    |
+| **Admin**       | 90       | Administrative access |
+| **Manager**     | 70       | Management operations |
+| **Supervisor**  | 60       | Team supervision      |
+| **Operator**    | 50       | Basic operations      |
 
 ---
 
 ## 📊 Permission Resources
 
-| Resource | Actions Available |
-|----------|-------------------|
-| **user** | create, read, update, delete, manage |
-| **role** | create, read, update, delete, manage |
-| **dashboard** | view, manage |
-| **reports** | view, create, export |
-| **settings** | view, update, manage |
-| **device** | view, create, update, delete |
-| **alerts** | view, manage, configure |
+| Resource      | Actions Available                    |
+| ------------- | ------------------------------------ |
+| **user**      | create, read, update, delete, manage |
+| **role**      | create, read, update, delete, manage |
+| **dashboard** | view, manage                         |
+| **reports**   | view, create, export                 |
+| **settings**  | view, update, manage                 |
+| **device**    | view, create, update, delete         |
+| **alerts**    | view, manage, configure              |
 
 ---
 
@@ -207,22 +212,26 @@ GET    /api/v1/policy/my-permissions      # Get my permissions
 ## 💡 Pro Tips
 
 ### Searching
+
 - Search is case-insensitive
 - Search works on name, email, mobile, and role
 - Combine with filters for best results
 
 ### Performance
+
 - Use pagination for large user lists
 - Filter by status/role to narrow results
 - Search is instant (no need to press Enter)
 
 ### Security
+
 - Deactivate instead of delete when unsure
 - Review permissions regularly
 - Limit admin role assignments
 - Never modify system roles
 
 ### Workflow
+
 - Create roles first, then assign to users
 - Use descriptive role names
 - Add clear descriptions
@@ -233,15 +242,19 @@ GET    /api/v1/policy/my-permissions      # Get my permissions
 ## 🐛 Troubleshooting
 
 ### Issue: Can't see users/roles
+
 **Fix**: Check if logged in as admin, refresh page
 
 ### Issue: Role assignment fails
+
 **Fix**: Verify role exists, check admin permissions
 
 ### Issue: Can't delete role
+
 **Fix**: Unassign from users first, system roles protected
 
 ### Issue: Permissions not working
+
 **Fix**: User may need to logout and login again
 
 ---
@@ -249,30 +262,32 @@ GET    /api/v1/policy/my-permissions      # Get my permissions
 ## 🧪 Testing
 
 ### Postman Collection
+
 ```bash
 Import: RBAC_Postman_Collection.json
 Run: Login → Get Users → Assign Role
 ```
 
 ### Browser Console
+
 ```javascript
 // Check authentication
-tokenTest.checkTokens()
+tokenTest.checkTokens();
 
 // Test API call
-tokenTest.testApiCall()
+tokenTest.testApiCall();
 ```
 
 ---
 
 ## 📱 Keyboard Shortcuts
 
-| Key | Action |
-|-----|--------|
-| `Ctrl+F` / `Cmd+F` | Focus search box |
-| `Esc` | Close dialogs |
-| `Enter` | Submit forms |
-| `Tab` | Navigate form fields |
+| Key                | Action               |
+| ------------------ | -------------------- |
+| `Ctrl+F` / `Cmd+F` | Focus search box     |
+| `Esc`              | Close dialogs        |
+| `Enter`            | Submit forms         |
+| `Tab`              | Navigate form fields |
 
 ---
 

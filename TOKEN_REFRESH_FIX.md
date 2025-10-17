@@ -1,7 +1,9 @@
 # Token Refresh Fix - Complete Guide
 
 ## Issue Summary
+
 The UI was not properly handling token refresh when the access token expired. The root causes were:
+
 1. **Inconsistent token keys**: Login stored as `accessToken` while token service expected `authToken`
 2. **No automatic retry**: Failed requests were not retried after token refresh
 3. **Missing logging**: No visibility into token refresh process
@@ -10,6 +12,7 @@ The UI was not properly handling token refresh when the access token expired. Th
 ## Changes Made
 
 ### 1. Fixed Token Key Consistency
+
 **File**: `client/src/utils/tokenService.js`
 
 - Changed `ACCESS_TOKEN_KEY` from `'authToken'` to `'accessToken'` to match login behavior
@@ -18,19 +21,23 @@ The UI was not properly handling token refresh when the access token expired. Th
 
 ```javascript
 // Before
-const ACCESS_TOKEN_KEY = 'authToken';
+const ACCESS_TOKEN_KEY = "authToken";
 export function getAccessToken() {
-  return localStorage.getItem(ACCESS_TOKEN_KEY) || localStorage.getItem('accessToken');
+  return (
+    localStorage.getItem(ACCESS_TOKEN_KEY) ||
+    localStorage.getItem("accessToken")
+  );
 }
 
 // After
-const ACCESS_TOKEN_KEY = 'accessToken';
+const ACCESS_TOKEN_KEY = "accessToken";
 export function getAccessToken() {
   return localStorage.getItem(ACCESS_TOKEN_KEY);
 }
 ```
 
 ### 2. Enhanced Refresh Token Service
+
 **File**: `client/src/utils/refreshTokenService.js`
 
 - Added detailed console logging for debugging
@@ -38,11 +45,13 @@ export function getAccessToken() {
 - Better error text extraction from failed responses
 
 **Key improvements:**
+
 - Logs when refresh starts: `[RefreshToken] Attempting to refresh access token...`
 - Logs on success: `[RefreshToken] Refresh successful, got new tokens`
 - Logs errors with details: `[RefreshToken] Request failed: 401 ...`
 
 ### 3. Enhanced Axios Interceptor
+
 **File**: `client/src/utils/axiosInstance.js`
 
 - Added comprehensive logging to track token refresh flow
@@ -50,12 +59,14 @@ export function getAccessToken() {
 - Better handling of queued requests during refresh
 
 **Logging added:**
+
 - `[AxiosInterceptor] 401 error detected, attempting token refresh...`
 - `[AxiosInterceptor] Refresh in progress, queuing request...`
 - `[AxiosInterceptor] Token refreshed successfully, retrying original request`
 - `[AxiosInterceptor] Already retried, clearing tokens and redirecting to login`
 
 ### 4. Token Storage Synchronization
+
 **File**: `client/src/utils/tokenService.js`
 
 The `setAccessToken()` function now properly updates the `loginData` object to keep all token references in sync:
@@ -68,13 +79,13 @@ export function setAccessToken(token) {
     const raw = localStorage.getItem(LOGIN_DATA_KEY);
     if (raw) {
       const obj = JSON.parse(raw);
-      if (obj && typeof obj === 'object') {
+      if (obj && typeof obj === "object") {
         obj.accessToken = token;
         localStorage.setItem(LOGIN_DATA_KEY, JSON.stringify(obj));
       }
     }
   } catch (e) {
-    console.error('Error updating loginData:', e);
+    console.error("Error updating loginData:", e);
   }
 }
 ```
@@ -82,6 +93,7 @@ export function setAccessToken(token) {
 ## How Token Refresh Works Now
 
 ### Flow Diagram
+
 ```
 User Request → Axios Request Interceptor → Add Bearer Token
                                           ↓
@@ -136,6 +148,7 @@ User Request → Axios Request Interceptor → Add Bearer Token
 10. **Return Response**: Original API call completes successfully
 
 ### Example Console Output (Success)
+
 ```
 [AxiosInterceptor] 401 error detected, attempting token refresh...
 [RefreshToken] Attempting to refresh access token...
@@ -144,6 +157,7 @@ User Request → Axios Request Interceptor → Add Bearer Token
 ```
 
 ### Example Console Output (Failure)
+
 ```
 [AxiosInterceptor] 401 error detected, attempting token refresh...
 [RefreshToken] Attempting to refresh access token...
@@ -155,27 +169,33 @@ User Request → Axios Request Interceptor → Add Bearer Token
 ## Testing the Fix
 
 ### 1. Test Token Refresh
+
 ```javascript
 // In browser console:
 
 // 1. Check current token
-console.log('Current token:', localStorage.getItem('accessToken'));
+console.log("Current token:", localStorage.getItem("accessToken"));
 
 // 2. Make an API call
-fetch('http://localhost:9001/api/v1/user/profile', {
-  headers: { 'Authorization': 'Bearer ' + localStorage.getItem('accessToken') }
-}).then(r => r.json()).then(console.log);
+fetch("http://localhost:9001/api/v1/user/profile", {
+  headers: { Authorization: "Bearer " + localStorage.getItem("accessToken") },
+})
+  .then((r) => r.json())
+  .then(console.log);
 
 // 3. Wait for token to expire (or manually set an expired token)
-localStorage.setItem('accessToken', 'expired_token_here');
+localStorage.setItem("accessToken", "expired_token_here");
 
 // 4. Make another API call - should auto-refresh
-fetch('http://localhost:9001/api/v1/user/profile', {
-  headers: { 'Authorization': 'Bearer ' + localStorage.getItem('accessToken') }
-}).then(r => r.json()).then(console.log);
+fetch("http://localhost:9001/api/v1/user/profile", {
+  headers: { Authorization: "Bearer " + localStorage.getItem("accessToken") },
+})
+  .then((r) => r.json())
+  .then(console.log);
 ```
 
 ### 2. Test Using the App
+
 1. Login to the application
 2. Use the app normally
 3. Wait for the access token to expire (default: 15 minutes)
@@ -184,6 +204,7 @@ fetch('http://localhost:9001/api/v1/user/profile', {
 6. Verify the request succeeds after refresh
 
 ### 3. Test with RBAC Page
+
 1. Navigate to "RBAC Management" page
 2. Let token expire
 3. Try to fetch roles or permissions
@@ -192,54 +213,64 @@ fetch('http://localhost:9001/api/v1/user/profile', {
 ## Token Expiration Times
 
 ### Backend Configuration
+
 Check `server/api-auth/src/services/jwtService.js`:
 
 ```javascript
 // Access Token (short-lived)
 const generateAccessToken = (payload) => {
-  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '15m' }); // 15 minutes
+  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "15m" }); // 15 minutes
 };
 
 // Refresh Token (long-lived)
 const generateRefreshToken = (payload) => {
-  return jwt.sign(payload, process.env.JWT_REFRESH_SECRET, { expiresIn: '7d' }); // 7 days
+  return jwt.sign(payload, process.env.JWT_REFRESH_SECRET, { expiresIn: "7d" }); // 7 days
 };
 ```
 
 ### Adjust Expiration (if needed)
+
 To test token refresh quickly, temporarily reduce access token expiration:
 
 ```javascript
 // For testing - expires in 1 minute
-expiresIn: '1m'
+expiresIn: "1m";
 
 // For production - typical values
-expiresIn: '15m' // or '1h', '24h', etc.
+expiresIn: "15m"; // or '1h', '24h', etc.
 ```
 
 ## Troubleshooting
 
 ### Issue: Token not refreshing
+
 **Check:**
+
 1. Open browser console
 2. Look for `[RefreshToken]` and `[AxiosInterceptor]` logs
 3. Check if refresh token exists: `localStorage.getItem('refreshToken')`
 4. Verify backend refresh endpoint is working (see Postman collection)
 
 ### Issue: Continuous login redirects
+
 **Check:**
+
 1. Verify login sets both tokens: `localStorage.getItem('accessToken')` and `localStorage.getItem('refreshToken')`
 2. Check if refresh token is expired (7 days default)
 3. Look for error in console logs
 
 ### Issue: 401 error not triggering refresh
+
 **Check:**
+
 1. Ensure you're using `axiosInstance` from `utils/axiosInstance.js`
 2. Not using plain `axios` or `fetch` directly
 3. Check that the URL doesn't include auth endpoints (login, register, refresh-token)
 
 ### Issue: Multiple refresh calls
+
 **Check:**
+
 1. The `isRefreshing` flag should prevent this
 2. Look for `[AxiosInterceptor] Refresh in progress, queuing request...` logs
 3. If you see this, queuing is working correctly
@@ -247,34 +278,38 @@ expiresIn: '15m' // or '1h', '24h', etc.
 ## Files Changed
 
 ### Modified Files
+
 1. ✅ `client/src/utils/tokenService.js` - Fixed token key and sync
 2. ✅ `client/src/utils/refreshTokenService.js` - Added logging and error handling
 3. ✅ `client/src/utils/axiosInstance.js` - Enhanced interceptor with logging
 
 ### Files to Update (If Using Direct fetch/axios)
+
 If any services are still using direct `fetch` or `axios` instead of `axiosInstance`, they should be updated:
 
 ```javascript
 // ❌ Don't do this
-import axios from 'axios';
-axios.get('/api/v1/users');
+import axios from "axios";
+axios.get("/api/v1/users");
 
 // ❌ Don't do this
-fetch('/api/v1/users', {
-  headers: { 'Authorization': 'Bearer ' + token }
+fetch("/api/v1/users", {
+  headers: { Authorization: "Bearer " + token },
 });
 
 // ✅ Do this instead
-import axiosInstance from '@/utils/axiosInstance';
-axiosInstance.get('/users'); // No need to add token manually
+import axiosInstance from "@/utils/axiosInstance";
+axiosInstance.get("/users"); // No need to add token manually
 ```
 
 ## Backend Requirements
 
 ### Refresh Token Endpoint
+
 **Endpoint**: `POST /api/v1/auth/refresh-token`
 
 **Request:**
+
 ```json
 {
   "token": "<refresh_token>"
@@ -282,6 +317,7 @@ axiosInstance.get('/users'); // No need to add token manually
 ```
 
 **Success Response (200):**
+
 ```json
 {
   "accessToken": "eyJhbGc...",
@@ -296,6 +332,7 @@ axiosInstance.get('/users'); // No need to add token manually
 ```
 
 **Error Response (401/403):**
+
 ```json
 {
   "message": "Invalid or expired refresh token"
@@ -305,61 +342,69 @@ axiosInstance.get('/users'); // No need to add token manually
 ## Security Considerations
 
 ### Token Storage
+
 - ✅ Tokens stored in `localStorage` (acceptable for most use cases)
 - ⚠️ For high-security apps, consider `httpOnly` cookies instead
 - ✅ Tokens cleared on logout and failed refresh
 
 ### Token Lifetimes
+
 - ✅ Access token: Short-lived (15 minutes)
 - ✅ Refresh token: Longer-lived (7 days)
 - ✅ Automatic logout after refresh token expires
 
 ### XSS Protection
+
 - Use Content Security Policy (CSP)
 - Sanitize user inputs
 - Keep dependencies updated
 
 ### CSRF Protection
+
 - Not needed for Bearer token auth (tokens in headers, not cookies)
 - If switching to cookies, add CSRF protection
 
 ## Best Practices
 
 ### 1. Always Use axiosInstance
+
 ```javascript
 // ✅ Good
-import axiosInstance from '@/utils/axiosInstance';
-const response = await axiosInstance.get('/users');
+import axiosInstance from "@/utils/axiosInstance";
+const response = await axiosInstance.get("/users");
 
 // ❌ Bad
-import axios from 'axios';
-const response = await axios.get('/api/v1/users');
+import axios from "axios";
+const response = await axios.get("/api/v1/users");
 ```
 
 ### 2. Don't Manually Handle Tokens
+
 ```javascript
 // ❌ Bad - manual token handling
-const token = localStorage.getItem('accessToken');
-fetch('/api/v1/users', {
-  headers: { 'Authorization': `Bearer ${token}` }
+const token = localStorage.getItem("accessToken");
+fetch("/api/v1/users", {
+  headers: { Authorization: `Bearer ${token}` },
 });
 
 // ✅ Good - automatic token handling
-import axiosInstance from '@/utils/axiosInstance';
-axiosInstance.get('/users'); // Token added automatically
+import axiosInstance from "@/utils/axiosInstance";
+axiosInstance.get("/users"); // Token added automatically
 ```
 
 ### 3. Handle Logout Properly
+
 ```javascript
-import { clearTokens } from '@/utils/tokenService';
+import { clearTokens } from "@/utils/tokenService";
 
 function logout() {
   clearTokens(); // Clears all auth data
-  window.location.href = '/login';
+  window.location.href = "/login";
 }
 ```
 
 ### 4. Monitor Console Logs
+
 Keep browser console open during development to see token refresh activity and catch issues early.
 
 ## Additional Resources
@@ -371,6 +416,7 @@ Keep browser console open during development to see token refresh activity and c
 ## Support
 
 If you encounter issues:
+
 1. Check browser console for error messages
 2. Verify backend is running and accessible
 3. Test refresh endpoint directly using Postman

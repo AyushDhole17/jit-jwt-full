@@ -1,6 +1,6 @@
 /**
  * Token Refresh Test Utility
- * 
+ *
  * This file provides utilities to test the token refresh mechanism.
  * Use these functions in the browser console to test token refresh.
  */
@@ -17,14 +17,14 @@ export function checkTokens() {
   console.log('Refresh Token:', refreshToken ? `${refreshToken.substring(0, 20)}...` : 'NOT SET');
   console.log('Login Data:', loginData ? 'SET' : 'NOT SET');
   console.log('User Data:', userData ? 'SET' : 'NOT SET');
-  
+
   if (accessToken) {
     try {
       const payload = JSON.parse(atob(accessToken.split('.')[1]));
       const expiresAt = new Date(payload.exp * 1000);
       const now = new Date();
       const timeLeft = Math.floor((expiresAt - now) / 1000 / 60);
-      
+
       console.log('Token Expires At:', expiresAt.toLocaleString());
       console.log('Time Left:', timeLeft > 0 ? `${timeLeft} minutes` : 'EXPIRED');
     } catch (e) {
@@ -50,9 +50,9 @@ export function expireToken() {
       payload.exp = Math.floor(Date.now() / 1000) - 60;
       const newPayload = btoa(JSON.stringify(payload));
       const expiredToken = `${parts[0]}.${newPayload}.${parts[2]}`;
-      
+
       localStorage.setItem('accessToken', expiredToken);
-      
+
       // Also update loginData
       const loginData = localStorage.getItem('loginData');
       if (loginData) {
@@ -60,7 +60,7 @@ export function expireToken() {
         obj.accessToken = expiredToken;
         localStorage.setItem('loginData', JSON.stringify(obj));
       }
-      
+
       console.log('✅ Token marked as expired');
       console.log('⚠️ Note: Server will still reject this token');
       console.log('💡 To properly test, wait for natural expiration or adjust backend JWT_SECRET');
@@ -74,17 +74,17 @@ export function expireToken() {
 export async function testApiCall() {
   console.log('=== Testing API Call ===');
   console.log('This will trigger token refresh if access token is expired');
-  
+
   try {
     // Import axiosInstance dynamically
     const { default: axiosInstance } = await import('./axiosInstance.js');
-    
+
     console.log('Making request to /user/profile...');
     const response = await axiosInstance.get('/user/profile');
-    
+
     console.log('✅ API call successful!');
     console.log('Response:', response.data);
-    
+
     // Check if token was refreshed
     console.log('\n=== After API Call ===');
     checkTokens();
@@ -147,7 +147,7 @@ Note: Token refresh only works if refresh token is still valid (7 days)
       `);
     }
   };
-  
+
   console.log('Token test utilities loaded. Type "tokenTest.help()" for usage.');
 }
 

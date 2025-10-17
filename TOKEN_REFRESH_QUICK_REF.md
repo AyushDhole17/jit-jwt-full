@@ -11,18 +11,20 @@
 ## 🚀 How to Test
 
 ### In Browser Console:
+
 ```javascript
 // 1. Check token status
-tokenTest.checkTokens()
+tokenTest.checkTokens();
 
 // 2. Make a test API call (will auto-refresh if expired)
-tokenTest.testApiCall()
+tokenTest.testApiCall();
 
 // 3. View help
-tokenTest.help()
+tokenTest.help();
 ```
 
 ### What You Should See:
+
 - `[AxiosInterceptor]` logs showing 401 detection
 - `[RefreshToken]` logs showing refresh process
 - Automatic retry of failed requests
@@ -31,6 +33,7 @@ tokenTest.help()
 ## 🔍 Console Logs to Watch
 
 ### Success Flow:
+
 ```
 [AxiosInterceptor] 401 error detected, attempting token refresh...
 [RefreshToken] Attempting to refresh access token...
@@ -39,6 +42,7 @@ tokenTest.help()
 ```
 
 ### Failure Flow (refresh token expired):
+
 ```
 [AxiosInterceptor] 401 error detected, attempting token refresh...
 [RefreshToken] Attempting to refresh access token...
@@ -58,19 +62,21 @@ tokenTest.help()
 ## 🛠️ Usage in Code
 
 ### ✅ Correct Usage:
+
 ```javascript
-import axiosInstance from '@/utils/axiosInstance';
+import axiosInstance from "@/utils/axiosInstance";
 
 // Token automatically added, refresh handled automatically
-const response = await axiosInstance.get('/users');
+const response = await axiosInstance.get("/users");
 ```
 
 ### ❌ Incorrect Usage:
+
 ```javascript
-import axios from 'axios';
+import axios from "axios";
 
 // Won't trigger auto-refresh!
-const response = await axios.get('http://localhost:9001/api/v1/users');
+const response = await axios.get("http://localhost:9001/api/v1/users");
 ```
 
 ## 🔐 Token Lifetimes
@@ -84,6 +90,7 @@ When refresh token expires → Logout required
 ## 📖 Full Documentation
 
 See `TOKEN_REFRESH_FIX.md` for complete details including:
+
 - Flow diagrams
 - Troubleshooting guide
 - Security considerations
@@ -100,16 +107,19 @@ See `TOKEN_REFRESH_FIX.md` for complete details including:
 ## ⚠️ Troubleshooting
 
 ### Not refreshing?
+
 1. Check console logs for errors
 2. Verify refresh token exists: `localStorage.getItem('refreshToken')`
 3. Test refresh endpoint in Postman
 
 ### Continuous redirects?
+
 1. Check if refresh token expired (> 7 days)
 2. Verify login sets both tokens
 3. Check backend refresh endpoint is working
 
 ### Multiple refresh calls?
+
 - This is normal during concurrent requests
 - Check for "queuing request" logs - this is correct behavior
 
