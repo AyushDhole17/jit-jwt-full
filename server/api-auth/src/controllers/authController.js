@@ -73,12 +73,12 @@ exports.login = async (req, res) => {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    if (!user.isActive || (user.company && !user.company.isActive)) {
-      return res.status(403).json({
-        message:
-          "Account is deactivated. Please contact admin to activate your account.",
-      });
-    }
+    // if (!user.isActive || (user.company && !user.company.isActive)) {
+    //   return res.status(403).json({
+    //     message:
+    //       "Account is deactivated. Please contact admin to activate your account.",
+    //   });
+    // }
 
     // Generate new session ID
     const newSessionId = uuidv4();
@@ -132,12 +132,12 @@ exports.refreshToken = async (req, res) => {
       return res.status(401).json({ message: "Invalid refresh token" });
     }
 
-    if (!user.isActive || (user.company && !user.company.isActive)) {
-      return res.status(403).json({
-        message:
-          "Account is deactivated. Please contact admin to activate your account.",
-      });
-    }
+    // if (!user.isActive || (user.company && !user.company.isActive)) {
+    //   return res.status(403).json({
+    //     message:
+    //       "Account is deactivated. Please contact admin to activate your account.",
+    //   });
+    // }
 
     const accessToken = generateAccessToken({
       userId: user._id,

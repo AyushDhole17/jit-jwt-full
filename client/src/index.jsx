@@ -1,6 +1,7 @@
 // import './utils/installOfflineHardLock';
 
 import './utils/authWatcher';
+import './utils/tokenTestUtils'; // Token refresh test utilities
 
 import { createRoot } from 'react-dom/client';
 

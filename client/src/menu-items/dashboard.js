@@ -1,8 +1,8 @@
 // assets
-import { IconDashboard, IconShieldLock } from '@tabler/icons-react';
+import { IconDashboard, IconShieldLock, IconUsers } from '@tabler/icons-react';
 
 // constant
-const icons = { IconDashboard, IconShieldLock };
+const icons = { IconDashboard, IconShieldLock, IconUsers };
 
 // ==============================|| DASHBOARD MENU ITEMS ||============================== //
 
@@ -29,10 +29,18 @@ const dashboard = {
     },
     {
       id: 'rbac-management',
-      title: 'RBAC Management',
+      title: 'Roles Management',
       type: 'item',
       url: '/rbac-management',
       icon: icons.IconShieldLock,
+      breadcrumbs: false
+    },
+    {
+      id: 'users-management',
+      title: 'Users Management',
+      type: 'item',
+      url: '/users-management',
+      icon: icons.IconUsers,
       breadcrumbs: false
     },
     {

@@ -2,6 +2,7 @@ const express = require("express");
 const {
   getProfile,
   getAllUsers,
+  createUser,
   updateUser,
   getUserById,
   deleteUser,
@@ -13,6 +14,7 @@ const {
   managerActivateUser,
   managerDeactivateUser,
   updateUserPicture,
+  assignRoleToUser,
 } = require("../../controllers/userController");
 const authenticateToken = require("../../middlewares/auth");
 const checkAdmin = require("../../middlewares/checkAdmin");
@@ -25,6 +27,8 @@ const router = express.Router();
 router.get("/profile", authenticateToken, getProfile);
 
 router.get("/getAllUsers", authenticateToken, checkAdmin, getAllUsers);
+
+router.post("/createUser", authenticateToken, checkAdmin, createUser);
 
 router.put(
   "/updateUser/:userId",
@@ -56,6 +60,14 @@ router.put(
   authenticateToken,
   checkAdmin,
   deactivateUser
+);
+
+// Assign RBAC role to user
+router.put(
+  "/assignRole/:userId",
+  authenticateToken,
+  checkAdmin,
+  assignRoleToUser
 );
 
 // Manager routes

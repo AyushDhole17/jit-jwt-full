@@ -23,6 +23,7 @@ export const userAPI = {
   getProfile: () => axiosInstance.get('/user/profile'),
   getAllUsers: () => axiosInstance.get('/user/getAllUsers'),
   getUserById: (userId) => axiosInstance.get(`/user/getUserById/${userId}`),
+  createUser: (userData) => axiosInstance.post('/user/createUser', userData),
   updateUser: (userId, userData) => axiosInstance.put(`/user/updateUser/${userId}`, userData),
   updateUserPicture: (userId, formData) =>
     axiosInstance.put(`/user/updateUserPicture/${userId}`, formData, {
@@ -31,6 +32,8 @@ export const userAPI = {
   deleteUser: (userId) => axiosInstance.delete(`/user/deleteUser/${userId}`),
   activateUser: (userId) => axiosInstance.put(`/user/activateUser/${userId}`),
   deactivateUser: (userId) => axiosInstance.put(`/user/deactivateUser/${userId}`),
+  assignRole: (userId, roleId) => axiosInstance.put(`/user/assignRole/${userId}`, { roleId }),
+  updatePassword: (oldPassword, newPassword) => axiosInstance.put('/user/update-password', { oldPassword, newPassword }),
 
   // Manager APIs
   managerGetUsers: () => axiosInstance.get('/user/manager/getUsers'),

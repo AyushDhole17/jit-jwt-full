@@ -11,10 +11,12 @@ export async function refreshAccessToken() {
   const refreshToken = getRefreshToken();
 
   if (!refreshToken) {
-    console.warn('No refresh token available');
+    console.warn('[RefreshToken] No refresh token available');
     clearTokens();
     return null;
   }
+
+  console.log('[RefreshToken] Attempting to refresh access token...');
 
   try {
     // Use fetch directly to avoid axios interceptor loop
@@ -25,11 +27,13 @@ export async function refreshAccessToken() {
     });
 
     if (!res.ok) {
-      console.error('Refresh token request failed:', res.status);
-      throw new Error('Refresh failed');
+      const errorText = await res.text();
+      console.error('[RefreshToken] Request failed:', res.status, errorText);
+      throw new Error(`Refresh failed with status ${res.status}`);
     }
 
     const data = await res.json();
+    console.log('[RefreshToken] Refresh successful, got new tokens');
 
     if (data?.accessToken) {
       setAccessToken(data.accessToken);
@@ -40,7 +44,7 @@ export async function refreshAccessToken() {
 
     return data?.accessToken ?? null;
   } catch (err) {
-    console.error('Refresh token failed:', err);
+    console.error('[RefreshToken] Failed:', err.message);
     clearTokens();
     return null;
   }

@@ -30,14 +30,19 @@ const userSchema = new mongoose.Schema(
     role: {
       type: String,
       enum: [
-        "super",
+        "super_admin",
         "admin",
         "manager",
-        "supervisor",
         "operator",
-        "sales",
-        "accounts",
-        "technical",
+        "supervisor",
+        // "super",
+        // "admin",
+        // "manager",
+        // "supervisor",
+        // "operator",
+        // "sales",
+        // "accounts",
+        // "technical",
       ],
       required: true,
     },
@@ -52,12 +57,14 @@ const userSchema = new mongoose.Schema(
       default: true,
     },
     company: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Company",
+      type: String,
+      // type: mongoose.Schema.Types.ObjectId,
+      // ref: "Company",
       // required: true,
-      required: function () {
-        return this.role !== "admin";
-      },
+      // required: function () {
+      //   return this.role !== "admin";
+      // },
+      default: null,
     },
     image: {
       type: String,

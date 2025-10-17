@@ -50,7 +50,8 @@ const MonitoringDetailsHistory = Loadable(lazy(() => import('views/monitoring-de
 const UserRoles = Loadable(lazy(() => import('views/user-roles')));
 const DevicePropertiesPage = Loadable(lazy(() => import('views/device-properties')));
 const PlantSummaryDashboard = Loadable(lazy(() => import('views/plantSummary/Dashboard.jsx')));
-const RBACManagement = Loadable(lazy(() => import('views/rbac')));
+const RBACManagement = Loadable(lazy(() => import('views/rbac/RolesManagement')));
+const UsersManagement = Loadable(lazy(() => import('views/users/UsersManagement')));
 
 // Electricity Bill
 const ElectricityBill = Loadable(lazy(() => import('views/electricity/BillWizard')));
@@ -84,6 +85,7 @@ const MainRoutes = {
     { path: 'help', element: <Help /> },
     { path: 'my-profile', element: <MyProfile /> },
     { path: 'rbac-management', element: <RBACManagement /> },
+    { path: 'users-management', element: <UsersManagement /> },
 
     {
       path: '/canvas2',

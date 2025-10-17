@@ -64,8 +64,11 @@ axiosInstance.interceptors.response.use(
       return Promise.reject(error);
     }
 
+    console.log('[AxiosInterceptor] 401 error detected, attempting token refresh...');
+
     // If already tried to refresh, logout
     if (originalRequest._retry) {
+      console.log('[AxiosInterceptor] Already retried, clearing tokens and redirecting to login');
       clearTokens();
       window.location.href = '/login';
       return Promise.reject(error);
@@ -73,10 +76,12 @@ axiosInstance.interceptors.response.use(
 
     // If currently refreshing, queue this request
     if (isRefreshing) {
+      console.log('[AxiosInterceptor] Refresh in progress, queuing request...');
       return new Promise((resolve, reject) => {
         failedQueue.push({ resolve, reject });
       })
         .then((token) => {
+          console.log('[AxiosInterceptor] Retrying queued request with new token');
           originalRequest.headers.Authorization = `Bearer ${token}`;
           return axiosInstance(originalRequest);
         })
@@ -93,17 +98,20 @@ axiosInstance.interceptors.response.use(
       const newAccessToken = await refreshAccessToken();
 
       if (newAccessToken) {
+        console.log('[AxiosInterceptor] Token refreshed successfully, retrying original request');
         setAccessToken(newAccessToken);
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         processQueue(null, newAccessToken);
         return axiosInstance(originalRequest);
       } else {
+        console.log('[AxiosInterceptor] Token refresh returned null, logging out');
         processQueue(new Error('Token refresh failed'), null);
         clearTokens();
         window.location.href = '/login';
         return Promise.reject(error);
       }
     } catch (refreshError) {
+      console.error('[AxiosInterceptor] Token refresh error:', refreshError);
       processQueue(refreshError, null);
       clearTokens();
       window.location.href = '/login';

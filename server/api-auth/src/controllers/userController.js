@@ -17,8 +17,97 @@ exports.getProfile = async (req, res) => {
 
 exports.getAllUsers = async (req, res) => {
   try {
-    const users = await User.find({}, "-password"); // Exclude password field
+    const users = await User.find({}, "-password")
+      .populate("roleRef", "name displayName description priority permissions")
+      .populate("company", "name"); // Populate roleRef with role details
     res.status(200).json(users);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
+  }
+};
+
+exports.createUser = async (req, res) => {
+  try {
+    const { name, email, password, mobile, company, roleId, role } = req.body;
+
+    // Check if the user is an admin
+    if (req.user.role !== "admin" && req.user.role !== "super_admin") {
+      return res.status(403).json({ message: "Access denied. Only admins can create users." });
+    }
+
+    // Validate required fields
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: "Name, email, and password are required" });
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: "Invalid email format" });
+    }
+
+    // Validate mobile number if provided
+    if (mobile) {
+      const mobileRegex = /^[0-9]{10}$/;
+      if (!mobileRegex.test(mobile)) {
+        return res.status(400).json({ message: "Invalid mobile number. Must be 10 digits" });
+      }
+    }
+
+    // Validate password length
+    if (password.length < 6) {
+      return res.status(400).json({ message: "Password must be at least 6 characters long" });
+    }
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "User with this email already exists" });
+    }
+
+    // Check if mobile number already exists
+    if (mobile) {
+      const existingMobile = await User.findOne({ mobile });
+      if (existingMobile) {
+        return res.status(400).json({ message: "User with this mobile number already exists" });
+      }
+    }
+
+    // If roleId is provided, fetch the role to get the role name
+    let roleName = role || "operator"; // Default role
+    if (roleId) {
+      const { Role } = require("../models/policy");
+      const roleDoc = await Role.findById(roleId);
+      if (roleDoc) {
+        roleName = roleDoc.name;
+      }
+    }
+
+    // Create new user
+    const newUser = new User({
+      name,
+      email,
+      password,
+      mobile,
+      company,
+      role: roleName,
+      roleRef: roleId || null,
+      isActive: true
+    });
+
+    await newUser.save();
+
+    // Return user without password
+    const userResponse = await User.findById(newUser._id, "-password")
+      .populate("roleRef", "name displayName description priority permissions")
+      .populate("company", "name");
+
+    res.status(201).json({ 
+      message: "User created successfully", 
+      user: userResponse 
+    });
   } catch (error) {
     res
       .status(500)
@@ -318,6 +407,52 @@ exports.updateUserPicture = async (req, res) => {
 
     res.status(200).json({
       message: "User picture updated successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
+  }
+};
+
+// Assign RBAC role to user
+exports.assignRoleToUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { roleId } = req.body;
+
+    // Check if the user is an admin
+    if (req.user.role !== "admin" && req.user.role !== "super_admin") {
+      return res.status(403).json({ message: "Access denied. Admin privileges required." });
+    }
+
+    if (!roleId) {
+      return res.status(400).json({ message: "Role ID is required" });
+    }
+
+    // Verify role exists
+    const Role = require("../models/policy").Role;
+    const role = await Role.findById(roleId);
+    if (!role) {
+      return res.status(404).json({ message: "Role not found" });
+    }
+
+    // Update user's roleRef
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { roleRef: roleId },
+      { new: true, runValidators: true }
+    )
+      .select("-password")
+      .populate("roleRef", "name displayName description priority permissions");
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({
+      message: "Role assigned successfully",
       user: updatedUser,
     });
   } catch (error) {
