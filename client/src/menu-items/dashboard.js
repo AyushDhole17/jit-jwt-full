@@ -19,14 +19,14 @@ const dashboard = {
       icon: icons.IconDashboard,
       breadcrumbs: false
     },
-    {
-      id: 'energy-analysis',
-      title: 'Energy Analysis',
-      type: 'item',
-      url: '/realtime-dashboard2?did=E_AA_Z_B_X_P0023_D2',
-      icon: icons.IconDashboard,
-      breadcrumbs: false
-    },
+    // {
+    //   id: 'energy-analysis',
+    //   title: 'Energy Analysis',
+    //   type: 'item',
+    //   url: '/realtime-dashboard2?did=E_AA_Z_B_X_P0023_D2',
+    //   icon: icons.IconDashboard,
+    //   breadcrumbs: false
+    // },
     {
       id: 'rbac-management',
       title: 'Roles Management',

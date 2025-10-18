@@ -53,6 +53,16 @@ const PlantSummaryDashboard = Loadable(lazy(() => import('views/plantSummary/Das
 const RBACManagement = Loadable(lazy(() => import('views/rbac/RolesManagement')));
 const UsersManagement = Loadable(lazy(() => import('views/users/UsersManagement')));
 
+// Banking routes
+const BankingDashboard = Loadable(lazy(() => import('views/banking/Dashboard')));
+const BranchManagement = Loadable(lazy(() => import('views/banking/BranchManagement')));
+const CustomerManagement = Loadable(lazy(() => import('views/banking/CustomerManagement')));
+const AccountManagement = Loadable(lazy(() => import('views/banking/AccountManagement')));
+const TransactionManagement = Loadable(lazy(() => import('views/banking/TransactionManagement')));
+
+const CardManagement = Loadable(lazy(() => import('views/banking/CardManagement')));
+const LoanManagement = Loadable(lazy(() => import('views/banking/LoanManagement')));
+
 // Electricity Bill
 const ElectricityBill = Loadable(lazy(() => import('views/electricity/BillWizard')));
 const BillsOverview = Loadable(lazy(() => import('views/electricity/BillsOverview')));
@@ -86,6 +96,16 @@ const MainRoutes = {
     { path: 'my-profile', element: <MyProfile /> },
     { path: 'rbac-management', element: <RBACManagement /> },
     { path: 'users-management', element: <UsersManagement /> },
+
+    // Banking routes
+    { path: 'banking/dashboard', element: <BankingDashboard /> },
+    { path: 'banking/branches', element: <BranchManagement /> },
+    { path: 'banking/customers', element: <CustomerManagement /> },
+    { path: 'banking/accounts', element: <AccountManagement /> },
+    { path: 'banking/transactions', element: <TransactionManagement /> },
+
+  { path: 'banking/cards', element: <CardManagement /> },
+  { path: 'banking/loans', element: <LoanManagement /> },
 
     {
       path: '/canvas2',
