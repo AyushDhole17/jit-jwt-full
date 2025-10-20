@@ -32,6 +32,9 @@ class CustomerService {
     // Generate unique customer ID
     customerData.customerId = generateCustomerId();
 
+    // Set userId (the logged-in user who is creating this customer)
+    customerData.userId = createdBy;
+
     // Check if PAN or Aadhaar already exists
     const existingPAN = await Customer.findOne({
       "kyc.panCard.number": customerData.kyc.panCard.number,
@@ -45,7 +48,7 @@ class CustomerService {
 
     const customer = new Customer(customerData);
     await customer.save();
-    return customer;
+    return customer.populate("homeBranch");
   }
 
   async updateCustomer(customerId, updateData) {

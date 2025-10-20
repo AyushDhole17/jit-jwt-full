@@ -1,32 +1,30 @@
 import { useState, useEffect } from 'react';
-import {
-  Box,
-  Grid,
-  Card,
-  CardContent,
-  Typography,
-  CircularProgress,
-  Alert,
-} from '@mui/material';
-import {
-  IconBuilding,
-  IconUsers,
-  IconWallet,
-  IconReceipt,
-  IconCoin,
-  IconTrendingUp,
-} from '@tabler/icons-react';
+import { Box, Grid, Card, CardContent, Typography, CircularProgress, Alert } from '@mui/material';
+import { IconBuilding, IconUsers, IconWallet, IconReceipt, IconCoin, IconTrendingUp } from '@tabler/icons-react';
 import { toast } from 'react-toastify';
 import MainCard from 'ui-component/cards/MainCard';
 import { bankingAPI, formatIndianCurrency } from 'services/bankingService';
 
 // Stats Card Component
 const StatsCard = ({ title, value, icon: Icon, color = '#1976d2', loading }) => (
-  <Card sx={{ height: '100%', background: `linear-gradient(135deg, ${color} 0%, ${color}dd 100%)`, color: 'white' }}>
-    <CardContent>
+  <Card
+    sx={{
+      height: '100%',
+      background: `linear-gradient(135deg, ${color} 0%, ${color}dd 100%)`,
+      color: 'white',
+      borderRadius: 2,
+      boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+      transition: 'transform 0.2s, box-shadow 0.2s',
+      '&:hover': {
+        transform: 'translateY(-4px)',
+        boxShadow: '0 8px 24px rgba(0,0,0,0.15)'
+      }
+    }}
+  >
+    <CardContent sx={{ p: 3 }}>
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Box>
-          <Typography variant="h6" sx={{ opacity: 0.9, mb: 1 }}>
+          <Typography variant="subtitle1" sx={{ opacity: 0.9, mb: 1, fontWeight: 500 }}>
             {title}
           </Typography>
           {loading ? (
@@ -37,7 +35,18 @@ const StatsCard = ({ title, value, icon: Icon, color = '#1976d2', loading }) => 
             </Typography>
           )}
         </Box>
-        <Icon size={48} style={{ opacity: 0.3 }} />
+        <Box
+          sx={{
+            background: 'rgba(255,255,255,0.2)',
+            borderRadius: '50%',
+            p: 1.5,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+        >
+          <Icon size={36} style={{ opacity: 0.9 }} />
+        </Box>
       </Box>
     </CardContent>
   </Card>
@@ -53,7 +62,7 @@ export default function BankingDashboard() {
     totalTransactions: 0,
     totalLoans: 0,
     activeLoans: 0,
-    totalLoanAmount: 0,
+    totalLoanAmount: 0
   });
 
   useEffect(() => {
@@ -73,7 +82,7 @@ export default function BankingDashboard() {
         totalTransactions: data.totalTransactions || 0,
         totalLoans: data.totalLoans || 0,
         activeLoans: data.activeLoans || 0,
-        totalLoanAmount: data.totalLoanAmount || 0,
+        totalLoanAmount: data.totalLoanAmount || 0
       });
     } catch (error) {
       console.error('Error loading dashboard:', error);
@@ -85,18 +94,19 @@ export default function BankingDashboard() {
   };
 
   return (
-    <MainCard title="Banking Dashboard">
+    <MainCard
+      title="Banking Dashboard"
+      contentSX={{ p: { xs: 2, sm: 3, md: 4 } }}
+      sx={{
+        background: 'linear-gradient(to bottom, #f8f9fa 0%, #ffffff 100%)',
+        borderRadius: 2
+      }}
+    >
       <Box>
         <Grid container spacing={3}>
           {/* Top Stats */}
           <Grid item xs={12} sm={6} md={3}>
-            <StatsCard
-              title="Total Branches"
-              value={stats.totalBranches}
-              icon={IconBuilding}
-              color="#1976d2"
-              loading={loading}
-            />
+            <StatsCard title="Total Branches" value={stats.totalBranches} icon={IconBuilding} color="#2196f3" loading={loading} />
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
             <StatsCard
@@ -128,19 +138,51 @@ export default function BankingDashboard() {
 
           {/* Financial Stats */}
           <Grid item xs={12} md={6}>
-            <Card sx={{ height: '100%' }}>
-              <CardContent>
-                <Typography variant="h4" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <IconTrendingUp /> Total Deposits
-                </Typography>
+            <Card
+              sx={{
+                height: '100%',
+                borderRadius: 2,
+                boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+                transition: 'transform 0.2s, box-shadow 0.2s',
+                '&:hover': {
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.12)'
+                }
+              }}
+            >
+              <CardContent sx={{ p: 3 }}>
+                <Box display="flex" alignItems="center" gap={1} mb={2}>
+                  <Box
+                    sx={{
+                      background: 'linear-gradient(135deg, #2196f3 0%, #1976d2 100%)',
+                      borderRadius: '8px',
+                      p: 1,
+                      display: 'flex',
+                      color: 'white'
+                    }}
+                  >
+                    <IconTrendingUp size={24} />
+                  </Box>
+                  <Typography variant="h4" fontWeight={600}>
+                    Total Deposits
+                  </Typography>
+                </Box>
                 {loading ? (
                   <CircularProgress />
                 ) : (
-                  <Typography variant="h2" color="primary" fontWeight="bold">
+                  <Typography
+                    variant="h2"
+                    sx={{
+                      background: 'linear-gradient(135deg, #2196f3 0%, #1976d2 100%)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      fontWeight: 'bold'
+                    }}
+                  >
                     {formatIndianCurrency(stats.totalDeposits)}
                   </Typography>
                 )}
-                <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
+                <Typography variant="body2" color="textSecondary" sx={{ mt: 2 }}>
                   Across all active accounts
                 </Typography>
               </CardContent>
@@ -148,19 +190,51 @@ export default function BankingDashboard() {
           </Grid>
 
           <Grid item xs={12} md={6}>
-            <Card sx={{ height: '100%' }}>
-              <CardContent>
-                <Typography variant="h4" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <IconCoin /> Loan Portfolio
-                </Typography>
+            <Card
+              sx={{
+                height: '100%',
+                borderRadius: 2,
+                boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+                transition: 'transform 0.2s, box-shadow 0.2s',
+                '&:hover': {
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.12)'
+                }
+              }}
+            >
+              <CardContent sx={{ p: 3 }}>
+                <Box display="flex" alignItems="center" gap={1} mb={2}>
+                  <Box
+                    sx={{
+                      background: 'linear-gradient(135deg, #f44336 0%, #d32f2f 100%)',
+                      borderRadius: '8px',
+                      p: 1,
+                      display: 'flex',
+                      color: 'white'
+                    }}
+                  >
+                    <IconCoin size={24} />
+                  </Box>
+                  <Typography variant="h4" fontWeight={600}>
+                    Loan Portfolio
+                  </Typography>
+                </Box>
                 {loading ? (
                   <CircularProgress />
                 ) : (
                   <>
-                    <Typography variant="h2" color="secondary" fontWeight="bold">
+                    <Typography
+                      variant="h2"
+                      sx={{
+                        background: 'linear-gradient(135deg, #f44336 0%, #d32f2f 100%)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        fontWeight: 'bold'
+                      }}
+                    >
                       {formatIndianCurrency(stats.totalLoanAmount)}
                     </Typography>
-                    <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
+                    <Typography variant="body2" color="textSecondary" sx={{ mt: 2 }}>
                       {stats.activeLoans} active loans out of {stats.totalLoans} total
                     </Typography>
                   </>
@@ -171,13 +245,22 @@ export default function BankingDashboard() {
 
           {/* Quick Info */}
           <Grid item xs={12}>
-            <Alert severity="info" sx={{ mt: 2 }}>
-              <Typography variant="h5" gutterBottom>
+            <Alert
+              severity="info"
+              sx={{
+                borderRadius: 2,
+                mt: 1,
+                '& .MuiAlert-icon': {
+                  fontSize: '28px'
+                }
+              }}
+            >
+              <Typography variant="h5" gutterBottom fontWeight={600}>
                 Welcome to the Banking Dashboard
               </Typography>
               <Typography variant="body2">
-                This dashboard provides an overview of your banking operations. Navigate through the menu to manage branches,
-                customers, accounts, transactions, loans, and cards.
+                This dashboard provides an overview of your banking operations. Navigate through the menu to manage branches, customers,
+                accounts, transactions, loans, and cards.
               </Typography>
             </Alert>
           </Grid>

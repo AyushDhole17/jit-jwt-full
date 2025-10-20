@@ -17,7 +17,14 @@ class CardService {
   }
 
   async issueCard(data, issuedBy) {
-    const { accountId, customerId, branchId, cardType, creditLimit = 0, deliveryAddress } = data;
+    const {
+      accountId,
+      customerId,
+      branchId,
+      cardType,
+      creditLimit = 0,
+      deliveryAddress,
+    } = data;
     const account = await Account.findById(accountId);
     if (!account) throw new Error("Account not found");
     const customer = await Customer.findById(customerId);
@@ -26,15 +33,21 @@ class CardService {
     const cardNumber = generateCardNumber();
     const cvv = generateCVV();
 
+    // Calculate expiry date (5 years from now)
+    const expiryDate = new Date();
+    expiryDate.setFullYear(expiryDate.getFullYear() + 5);
+
     const card = new Card({
       accountId,
       customerId,
       branchId: branchId || account.branchId,
       cardType,
-      cardHolderName: `${customer.name.firstName} ${customer.name.lastName}`.toUpperCase(),
+      cardHolderName:
+        `${customer.name.firstName} ${customer.name.lastName}`.toUpperCase(),
       cardNumber,
       cvv,
-      status: "issued",
+      expiryDate,
+      status: "active", // Valid status: active, blocked, expired, lost, stolen, closed
       creditLimit: cardType === "credit" ? creditLimit : 0,
       availableCredit: cardType === "credit" ? creditLimit : 0,
       deliveryAddress,
