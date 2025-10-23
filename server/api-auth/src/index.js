@@ -16,6 +16,7 @@ const errorHandler = require("./middlewares/errorHandler");
 const authRoutes = require("./routes/v1/auth");
 const userRoutes = require("./routes/v1/user");
 const policyRoutes = require("./routes/v1/policy");
+const bankingRoutes = require("./routes/v1/banking");
 
 connectDB();
 
@@ -83,6 +84,7 @@ app.get("/api/v1/", (req, res) => {
       auth: "/api/v1/auth",
       user: "/api/v1/user",
       policy: "/api/v1/policy",
+      banking: "/api/v1/banking",
     },
   });
 });
@@ -91,6 +93,7 @@ app.get("/api/v1/", (req, res) => {
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/policy", policyRoutes);
+app.use("/api/v1/banking", bankingRoutes);
 
 // Handle errors
 app.use(errorHandler);
