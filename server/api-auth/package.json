@@ -10,7 +10,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "seed:rbac": "node ./src/scripts/rbacSeeder.js"
   },
-  "author": "Rushikesh Pande",
+  "author": "Antara",
   "license": "ISC",
   "dependencies": {
     "aedes": "^0.51.3",
